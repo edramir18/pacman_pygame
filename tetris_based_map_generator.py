@@ -1,5 +1,6 @@
 import random
-from typing import Set, Dict
+from typing import Set, Dict, List
+from _collections import deque
 
 from cell import Cell
 from coord import Coord
@@ -100,12 +101,37 @@ class TetrisBasedMapGenerator:
         mini_grid = Grid(width, height)
         self.generate(mini_grid, rand)
         for pos, cell in mini_grid.cells.items():
-            grid.cells[pos].clone(cell)
+            grid.get(pos).clone(cell)
             pos = Coord(grid.width - pos.x - 1, pos.y)
-            grid.cells[pos].clone(cell)
-        cell_lst = [pos for pos, cell in grid.cells.items() if cell.is_floor()]
-        islands = detect_island(cell_lst, grid)
+            grid.get(pos).clone(cell)
+        pos_list = [pos for pos, cell in grid.cells.items() if cell.is_floor()]
+        islands = self.detect_islands(pos_list, grid)
+        for island in islands:
+            for coord in island:
+                grid.get(coord).celltype = Cell.CellType.WALL
 
+    @staticmethod
+    def detect_islands(pos_list: List[Coord], grid: Grid):
+        islands = list()  # type: List[List[Coord]]
+        fifo = deque()  # type: deque[Coord]
+        computed = set()  # type: Set[Coord]
+        for first in pos_list:
+            if first in computed:
+                continue
+            fifo.append(first)
+            island = list()  # type: List[Coord]
+            computed.add(first)
+            island.append(first)
+            while len(fifo) > 0:
+                e = fifo.popleft()
+                for coord in grid.get_neighbours(e):
+                    if coord not in computed and grid.get(coord).is_floor():
+                        fifo.append(coord)
+                        computed.add(coord)
+                        island.append(coord)
+            islands.append(island)
+        islands.sort(key=lambda x: len(x), reverse=True)
+        return islands[1:]
 
     def generate(self, grid: Grid, rand: random.Random):
         width = grid.width // 2 + 1
@@ -139,8 +165,8 @@ class TetrisBasedMapGenerator:
                                     cell_pos = grid_pos + Coord(i - 1, delta.y)
                                 else:
                                     cell_pos = grid_pos + Coord(delta.x, i - 1)
-                                cell = grid.cells.get(cell_pos, None)
-                                if cell is not None:
+                                if cell_pos in grid.cells:
+                                    cell = grid.get(cell_pos)
                                     cell.celltype = Cell.CellType.FLOOR
 
     @staticmethod

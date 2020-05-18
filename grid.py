@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from cell import Cell
 from coord import Coord
@@ -27,4 +27,12 @@ class Grid:
             x, y = pos
         else:
             raise ValueError
-        return
+        return self.cells.get(Coord(x, y))
+
+    def get_neighbours(self, coord: Coord):
+        pos_list = list()  # type: List[Coord]
+        for adj in Coord.adjacency():
+            pos = coord + adj
+            if pos in self.cells:
+                pos_list.append(pos)
+        return pos_list

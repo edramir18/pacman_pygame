@@ -1,3 +1,4 @@
+import random
 import pygame as pg
 
 from game import Game
@@ -5,8 +6,7 @@ from game_view import GameView
 
 
 def start():
-    game = Game(100)
-    game.generate_grid()
+    game = Game(random.randint(1, 100) * 100)
     pg.init()
     clock = pg.time.Clock()
     running = True

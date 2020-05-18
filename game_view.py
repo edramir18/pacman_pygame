@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.rect import Rect
 
 from cell import Cell
+from coord import Coord
 from grid import Grid
 
 
@@ -14,6 +15,7 @@ class GameView:
         self.window = pg.display.set_mode((self.width, self.height))
         self.wall_color = (0, 0, 0)
         self.floor_color = (255, 255, 255)
+        self.font = pg.font.SysFont('Sans Serif', 14)
 
     def update(self, grid: Grid):
         rect = Rect(0, 0, self.width, self.height)
