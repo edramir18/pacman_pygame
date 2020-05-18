@@ -20,7 +20,7 @@ def start():
             elif e.type == pg.KEYDOWN:
                 if e.key == pg.K_ESCAPE:
                     running = False
-        view.update(game.grid)
+        view.update(game)
         pg.display.flip()
     pg.quit()
 

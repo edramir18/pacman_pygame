@@ -14,6 +14,8 @@ class Cell:
 
     def __init__(self):
         self.celltype = Cell.CellType.WALL
+        self.has_cherry = False
+        self.has_pellet = False
 
     def __str__(self):
         return str(self.celltype)
